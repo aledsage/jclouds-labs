@@ -58,8 +58,8 @@ public class DockerApiMetadata extends BaseHttpApiMetadata<DockerApi> {
       properties.setProperty(Constants.PROPERTY_MAX_RETRIES, "15");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       properties.setProperty(Constants.PROPERTY_CONNECTION_TIMEOUT, "1200000"); // 15 minutes
-      properties.setProperty("image.login-user", "root");
-      properties.setProperty(ComputeServiceProperties.IMAGE_LOGIN_USER, "root:password");
+//      properties.setProperty("image.login-user", "root");
+//      properties.setProperty(ComputeServiceProperties.IMAGE_LOGIN_USER, "root:password");
       properties.setProperty(TEMPLATE, "osFamily=UBUNTU,os64Bit=true,osVersionMatches=1[012].[01][04]");
       return properties;
    }
