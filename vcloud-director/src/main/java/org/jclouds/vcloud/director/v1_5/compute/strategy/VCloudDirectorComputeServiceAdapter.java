@@ -21,11 +21,10 @@ import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.tryFind;
 import static org.jclouds.util.Predicates2.retry;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ORG_NETWORK;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VDC;
+
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -62,23 +61,16 @@ import org.jclouds.vcloud.director.v1_5.domain.network.FirewallService;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
 import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
-import org.jclouds.vcloud.director.v1_5.domain.network.IpScopes;
-import org.jclouds.vcloud.director.v1_5.domain.network.NatService;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkAssignment;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkServiceType;
-import org.jclouds.vcloud.director.v1_5.domain.network.RouterInfo;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.params.DeployVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
-import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.SourcedCompositionItemParam;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
@@ -87,7 +79,6 @@ import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -270,8 +261,34 @@ public class VCloudDirectorComputeServiceAdapter implements
       boolean poweredOn = retryTaskSuccess.apply(powerOnTask);
       logger.trace("<< vApp(%s) reset completed(%s)", vApp.getId(), poweredOn);
 */
-      LoginCredentials loginCredentials = VCloudDirectorComputeUtils.getCredentialsFrom(vm);
-      return new NodeAndInitialCredentials(vm, vm.getId(), loginCredentials.toBuilder().user("root").build());
+
+      // Infer the login credentials from the VM, defaulting to "root" user
+      LoginCredentials defaultCredentials = VCloudDirectorComputeUtils.getCredentialsFrom(vm);
+      LoginCredentials.Builder credsBuilder;
+      if (defaultCredentials == null) {
+         credsBuilder = LoginCredentials.builder().user("root");
+      } else {
+         credsBuilder = defaultCredentials.toBuilder();
+         if (defaultCredentials.getUser() == null) {
+            credsBuilder.user("root");
+         }
+      }
+
+      // If login overrides are supplied in TemplateOptions, always prefer those.
+      String overriddenLoginUser = template.getOptions().getLoginUser();
+      String overriddenLoginPassword = template.getOptions().getLoginPassword();
+      String overriddenLoginPrivateKey = template.getOptions().getLoginPrivateKey();
+      if (overriddenLoginUser != null) {
+         credsBuilder.user(overriddenLoginUser);
+      }
+      if (overriddenLoginPassword != null) {
+         credsBuilder.password(overriddenLoginPassword);
+      }
+      if (overriddenLoginPrivateKey != null) {
+         credsBuilder.privateKey(overriddenLoginPrivateKey);
+      }
+
+      return new NodeAndInitialCredentials<Vm>(vm, vm.getId(), credsBuilder.build());
    }
 
    private SourcedCompositionItemParam createVmItem(Vm vm, String networkName) {
