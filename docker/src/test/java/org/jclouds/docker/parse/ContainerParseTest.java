@@ -32,6 +32,7 @@ import org.jclouds.docker.domain.State;
 import org.jclouds.docker.internal.BaseDockerParseTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -126,8 +127,7 @@ public class ContainerParseTest extends BaseDockerParseTest<Container> {
               .hostsPath("/var/lib/docker/containers/6c9932f478bd761f32ddb54ed28ab42ab6fac6f2a279f561ea31503ee9d39524/hosts")
               .mountLabel("")
               .processLabel("")
-              .node(Node.builder().
-                      ip("10.10.10.10").build())
+              .node(Optional.of(Node.builder().ip("10.10.10.10").build()))
               .build();
    }
 }

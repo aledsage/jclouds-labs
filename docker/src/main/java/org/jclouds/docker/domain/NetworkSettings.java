@@ -21,13 +21,10 @@ import static org.jclouds.docker.internal.NullSafeCopies.copyOf;
 import java.util.List;
 import java.util.Map;
 
-import org.jclouds.docker.internal.NullSafeCopies;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @AutoValue
 public abstract class NetworkSettings {
@@ -112,153 +109,45 @@ public abstract class NetworkSettings {
                                         List<String> secondaryIPv6Addresses, String endpointId, String gateway, String globalIPv6Address,
                                         int globalIPv6PrefixLen, String ipAddress, int ipPrefixLen, String ipv6Gateway,
                                         String macAddress, Map<String, Details> networks, String portMapping) {
-      return new AutoValue_NetworkSettings(
-              bridge, sandboxId, hairpinMode, linkLocalIPv6Address,
-              linkLocalIPv6PrefixLen, ports, sandboxKey, copyOf(secondaryIPAddresses), copyOf(secondaryIPv6Addresses),
-              endpointId, gateway, globalIPv6Address, globalIPv6PrefixLen,
-              ipAddress, ipPrefixLen, ipv6Gateway,
-              macAddress, copyOf(networks), portMapping);
-   }
-
-   public static Builder builder() {
-      return new Builder();
+      return builder().bridge(bridge).sandboxId(sandboxId).hairpinMode(hairpinMode).linkLocalIPv6Address(linkLocalIPv6Address)
+              .linkLocalIPv6PrefixLen(linkLocalIPv6PrefixLen).ports(ports).sandboxKey(sandboxKey)
+              .secondaryIPAddresses(copyOf(secondaryIPAddresses)).secondaryIPv6Addresses(copyOf(secondaryIPv6Addresses))
+              .endpointId(endpointId).gateway(gateway).globalIPv6Address(globalIPv6Address).globalIPv6PrefixLen(globalIPv6PrefixLen)
+              .ipAddress(ipAddress).ipPrefixLen(ipPrefixLen).ipv6Gateway(ipv6Gateway)
+              .macAddress(macAddress).networks(copyOf(networks)).portMapping(portMapping)
+              .build();
    }
 
    public Builder toBuilder() {
-      return builder().fromNetworkSettings(this);
+      return new AutoValue_NetworkSettings.Builder(this);
    }
 
-   public static final class Builder {
-
-      private String ipAddress;
-      private int ipPrefixLen;
-      private String gateway;
-      private String bridge;
-      private String portMapping;
-      private Map<String, List<Map<String, String>>> ports;
-      private String sandboxId;
-      private boolean hairpinMode;
-      private String linkLocalIPv6Address;
-      private int linkLocalIPv6PrefixLen;
-      private String sandboxKey;
-      private List<String> secondaryIPAddresses = Lists.newArrayList();
-      private List<String> secondaryIPv6Addresses = Lists.newArrayList();
-      private String endpointId;
-      private String globalIPv6Address;
-      private int globalIPv6PrefixLen;
-      private String ipv6Gateway;
-      private String macAddress;
-      private Map<String, Details> networks = Maps.newHashMap();
-
-      public Builder ipAddress(String ipAddress) {
-         this.ipAddress = ipAddress;
-         return this;
-      }
-
-      public Builder ipPrefixLen(int ipPrefixLen) {
-         this.ipPrefixLen = ipPrefixLen;
-         return this;
-      }
-
-      public Builder gateway(String gateway) {
-         this.gateway = gateway;
-         return this;
-      }
-
-      public Builder bridge(String bridge) {
-         this.bridge = bridge;
-         return this;
-      }
-
-      public Builder portMapping(String portMapping) {
-         this.portMapping = portMapping;
-         return this;
-      }
-
-      public Builder ports(Map<String, List<Map<String, String>>> ports) {
-         this.ports = NullSafeCopies.copyWithNullOf(ports);
-         return this;
-      }
-
-      public Builder sandboxId(String sandboxId) {
-         this.sandboxId = sandboxId;
-         return this;
-      }
-
-      public Builder hairpinMode(boolean hairpinMode) {
-         this.hairpinMode = hairpinMode;
-         return this;
-      }
-
-      public Builder linkLocalIPv6Address(String linkLocalIPv6Address) {
-         this.linkLocalIPv6Address = linkLocalIPv6Address;
-         return this;
-      }
-
-      public Builder linkLocalIPv6PrefixLen(int linkLocalIPv6PrefixLen) {
-         this.linkLocalIPv6PrefixLen = linkLocalIPv6PrefixLen;
-         return this;
-      }
-
-      public Builder sandboxKey(String sandboxKey) {
-         this.sandboxKey = sandboxKey;
-         return this;
-      }
-
-      public Builder secondaryIPAddresses(List<String> secondaryIPAddresses) {
-         this.secondaryIPAddresses = secondaryIPAddresses;
-         return this;
-      }
-
-      public Builder secondaryIPv6Addresses(List<String> secondaryIPv6Addresses) {
-         this.secondaryIPv6Addresses = secondaryIPv6Addresses;
-         return this;
-      }
-
-      public Builder endpointId(String endpointId) {
-         this.endpointId = endpointId;
-         return this;
-      }
-
-      public Builder globalIPv6Address(String globalIPv6Address) {
-         this.globalIPv6Address = globalIPv6Address;
-         return this;
-      }
-
-      public Builder globalIPv6PrefixLen(int globalIPv6PrefixLen) {
-         this.globalIPv6PrefixLen = globalIPv6PrefixLen;
-         return this;
-      }
-
-      public Builder ipv6Gateway(String ipv6Gateway) {
-         this.ipv6Gateway = ipv6Gateway;
-         return this;
-      }
-
-      public Builder macAddress(String macAddress) {
-         this.macAddress = macAddress;
-         return this;
-      }
-
-      public Builder networks(Map<String, Details> networks) {
-         this.networks.putAll(networks);
-         return this;
-      }
-
-      public NetworkSettings build() {
-         return NetworkSettings.create(bridge, sandboxId, hairpinMode, linkLocalIPv6Address, linkLocalIPv6PrefixLen, ports,
-                 sandboxKey, secondaryIPAddresses, secondaryIPv6Addresses, endpointId, gateway,
-                 globalIPv6Address, globalIPv6PrefixLen, ipAddress, ipPrefixLen, ipv6Gateway, macAddress, networks, portMapping);
-      }
-
-      public Builder fromNetworkSettings(NetworkSettings in) {
-         return this.ipAddress(in.ipAddress()).ipPrefixLen(in.ipPrefixLen()).gateway(in.gateway()).bridge(in.bridge())
-               .portMapping(in.portMapping()).ports(in.ports()).sandboxId(in.sandboxId()).hairpinMode(in.hairpinMode()).linkLocalIPv6Address(in
-                         .linkLocalIPv6Address()).linkLocalIPv6PrefixLen(in.linkLocalIPv6PrefixLen()).sandboxKey(in.sandboxKey()).secondaryIPAddresses(in
-                         .secondaryIPAddresses()).secondaryIPv6Addresses(in.secondaryIPv6Addresses()).endpointId(in.endpointId()).globalIPv6Address(in
-                         .globalIPv6Address()).globalIPv6PrefixLen(in.globalIPv6PrefixLen()).ipv6Gateway(in.ipv6Gateway()).macAddress(in.macAddress())
-                 .networks(in.networks());
-      }
+   public static Builder builder() {
+      return new AutoValue_NetworkSettings.Builder();
    }
 
+   @AutoValue.Builder
+   public abstract static class Builder {
+      public abstract Builder bridge(String value);
+      public abstract Builder sandboxId(String value);
+      public abstract Builder hairpinMode(boolean value);
+      public abstract Builder linkLocalIPv6Address(String value);
+      public abstract Builder linkLocalIPv6PrefixLen(int value);
+      public abstract Builder ports(Map<String, List<Map<String, String>>> value);
+      public abstract Builder sandboxKey(String value);
+      public abstract Builder secondaryIPAddresses(List<String> value);
+      public abstract Builder secondaryIPv6Addresses(List<String> value);
+      public abstract Builder endpointId(String value);
+      public abstract Builder gateway(String value);
+      public abstract Builder globalIPv6Address(String value);
+      public abstract Builder globalIPv6PrefixLen(int value);
+      public abstract Builder ipAddress(String value);
+      public abstract Builder ipPrefixLen(int value);
+      public abstract Builder ipv6Gateway(String value);
+      public abstract Builder macAddress(String value);
+      public abstract Builder networks(Map<String, Details> value);
+      public abstract Builder portMapping(String value);
+      
+      public abstract NetworkSettings build();
+   }
 }

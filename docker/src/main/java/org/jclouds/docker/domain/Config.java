@@ -16,20 +16,16 @@
  */
 package org.jclouds.docker.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.docker.internal.NullSafeCopies.copyOf;
 import static org.jclouds.docker.internal.NullSafeCopies.copyWithNullOf;
 
 import java.util.List;
 import java.util.Map;
 
-import org.jclouds.docker.domain.HostConfig.Builder;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @AutoValue
 public abstract class Config {
@@ -91,175 +87,47 @@ public abstract class Config {
          boolean openStdin, boolean stdinOnce, List<String> env, List<String> cmd, List<String> entrypoint,
          String image, Map<String, ?> volumes, String workingDir, boolean networkDisabled,
          Map<String, ?> exposedPorts, List<String> securityOpts, HostConfig hostConfig) {
-      return new AutoValue_Config(hostname, domainname, user, memory, memorySwap, cpuShares, attachStdin,
-              attachStdout, attachStderr, tty, openStdin, stdinOnce, copyWithNullOf(env), copyWithNullOf(cmd),
-              copyWithNullOf(entrypoint), image, copyWithNullOf(volumes), workingDir, networkDisabled,
-              copyOf(exposedPorts), copyOf(securityOpts), hostConfig);
-   }
-
-   public static Builder builder() {
-      return new Builder();
+      return builder().hostname(hostname).domainname(domainname).user(user).memory(memory).memorySwap(memorySwap)
+               .cpuShares(cpuShares).attachStdin(attachStdin).attachStdout(attachStdout).attachStderr(attachStderr)
+               .tty(tty).openStdin(openStdin).stdinOnce(stdinOnce).env(copyWithNullOf(env)).cmd(copyWithNullOf(cmd))
+               .entrypoint(copyWithNullOf(entrypoint)).image(image).volumes(copyWithNullOf(volumes))
+               .workingDir(workingDir).networkDisabled(networkDisabled).exposedPorts(copyOf(exposedPorts))
+               .securityOpts(copyOf(securityOpts)).hostConfig(hostConfig).build();
    }
 
    public Builder toBuilder() {
-      return builder().fromConfig(this);
+      return new AutoValue_Config.Builder(this);
    }
 
-   public static final class Builder {
-      private String hostname;
-      private String domainname;
-      private String user;
-      private int memory;
-      private int memorySwap;
-      private int cpuShares;
-      private boolean attachStdin;
-      private boolean attachStdout;
-      private boolean attachStderr;
-      private boolean tty;
-      private boolean openStdin;
-      private boolean stdinOnce;
-      private List<String> env;
-      private List<String> cmd;
-      private List<String> entrypoint;
-      private String image;
-      private Map<String, ?> volumes;
-      private String workingDir;
-      private boolean networkDisabled;
-      private Map<String, ?> exposedPorts = Maps.newHashMap();
-      private List<String> securityOpts = Lists.newArrayList();
-      private HostConfig hostConfig;
+   public static Builder builder() {
+      return new AutoValue_Config.Builder();
+   }
 
-      public Builder hostname(String hostname) {
-         this.hostname = hostname;
-         return this;
-      }
+   @AutoValue.Builder
+   public abstract static class Builder {
+      public abstract Builder hostname(String value);
+      public abstract Builder domainname(String value);
+      public abstract Builder user(String value);
+      public abstract Builder memory(int value);
+      public abstract Builder memorySwap(int value);
+      public abstract Builder cpuShares(int value);
+      public abstract Builder attachStdin(boolean value);
+      public abstract Builder attachStdout(boolean value);
+      public abstract Builder attachStderr(boolean value);
+      public abstract Builder tty(boolean value);
+      public abstract Builder openStdin(boolean value);
+      public abstract Builder stdinOnce(boolean value);
+      public abstract Builder env(List<String> value);
+      public abstract Builder cmd(List<String> value);
+      public abstract Builder entrypoint(List<String> value);
+      public abstract Builder image(String value);
+      public abstract Builder volumes(Map<String, ?> value);
+      public abstract Builder workingDir(String value);
+      public abstract Builder networkDisabled(boolean value);
+      public abstract Builder exposedPorts(Map<String, ?> value);
+      public abstract Builder securityOpts(List<String> value);
+      public abstract Builder hostConfig(HostConfig value);
 
-      public Builder domainname(String domainname) {
-         this.domainname = domainname;
-         return this;
-      }
-
-      public Builder user(String user) {
-         this.user = user;
-         return this;
-      }
-
-      public Builder memory(Integer memory) {
-         if (memory != null) {
-            this.memory = memory;
-         }
-         return this;
-      }
-
-      public Builder memorySwap(Integer memorySwap) {
-         if (memorySwap != null) {
-            this.memorySwap = memorySwap;
-         }
-         return this;
-      }
-
-      public Builder cpuShares(Integer cpuShares) {
-         if (cpuShares != null) {
-            this.cpuShares = cpuShares;
-         }
-         return this;
-      }
-
-      public Builder attachStdin(boolean attachStdin) {
-         this.attachStdin = attachStdin;
-         return this;
-      }
-
-      public Builder attachStdout(boolean attachStdout) {
-         this.attachStdout = attachStdout;
-         return this;
-      }
-
-      public Builder attachStderr(boolean attachStderr) {
-         this.attachStderr = attachStderr;
-         return this;
-      }
-
-      public Builder tty(boolean tty) {
-         this.tty = tty;
-         return this;
-      }
-
-      public Builder openStdin(boolean openStdin) {
-         this.openStdin = openStdin;
-         return this;
-      }
-
-      public Builder stdinOnce(boolean stdinOnce) {
-         this.stdinOnce = stdinOnce;
-         return this;
-      }
-
-      public Builder env(List<String> env) {
-         this.env = env;
-         return this;
-      }
-
-      public Builder cmd(List<String> cmd) {
-         this.cmd = cmd;
-         return this;
-      }
-
-      public Builder entrypoint(List<String> entrypoint) {
-         this.entrypoint = entrypoint;
-         return this;
-      }
-
-      public Builder image(String image) {
-         this.image = checkNotNull(image, "image");
-         return this;
-      }
-
-      public Builder volumes(Map<String, ?> volumes) {
-         this.volumes = volumes;
-         return this;
-      }
-
-      public Builder workingDir(String workingDir) {
-         this.workingDir = workingDir;
-         return this;
-      }
-
-      public Builder networkDisabled(boolean networkDisabled) {
-         this.networkDisabled = networkDisabled;
-         return this;
-      }
-
-      public Builder exposedPorts(Map<String, ?> exposedPorts) {
-         this.exposedPorts = exposedPorts;
-         return this;
-      }
-
-      public Builder securityOpts(List<String> securityOpts) {
-         this.securityOpts = securityOpts;
-         return this;
-      }
-
-      public Builder hostConfig(HostConfig hostConfig) {
-         this.hostConfig = hostConfig;
-         return this;
-      }
-
-      public Config build() {
-         return Config.create(hostname, domainname, user, memory, memorySwap, cpuShares, attachStdin, attachStdout,
-                 attachStderr, tty, openStdin, stdinOnce, env, cmd, entrypoint, image, volumes, workingDir,
-                 networkDisabled, exposedPorts, securityOpts, hostConfig);
-      }
-
-      public Builder fromConfig(Config in) {
-         return hostname(in.hostname()).domainname(in.domainname()).user(in.user()).memory(in.memory())
-                 .memorySwap(in.memorySwap()).cpuShares(in.cpuShares()).attachStdin(in.attachStdin())
-                 .attachStdout(in.attachStdout()).attachStderr(in.attachStderr()).tty(in.tty())
-                 .openStdin(in.openStdin()).stdinOnce(in.stdinOnce()).env(in.env()).cmd(in.cmd())
-                 .entrypoint(in.entrypoint()).image(in.image()).volumes(in.volumes()).workingDir(in.workingDir())
-                 .networkDisabled(in.networkDisabled()).exposedPorts(in.exposedPorts())
-                 .securityOpts(in.securityOpts()).hostConfig(in.hostConfig());
-      }
-
+      public abstract Config build();
    }
 }

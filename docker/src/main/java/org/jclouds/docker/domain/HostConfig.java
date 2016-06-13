@@ -22,12 +22,10 @@ import static org.jclouds.docker.internal.NullSafeCopies.copyWithNullOf;
 import java.util.List;
 import java.util.Map;
 
-import com.google.auto.value.AutoValue;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
+
+import com.google.auto.value.AutoValue;
 
 @AutoValue
 public abstract class HostConfig {
@@ -75,129 +73,41 @@ public abstract class HostConfig {
          boolean privileged, List<String> dns, List<String> dnsSearch, Map<String, List<Map<String, String>>> portBindings,
          List<String> links, List<String> extraHosts, boolean publishAllPorts, List<String> volumesFrom, String networkMode, 
          List<String> securityOpt, List<String> capAdd, List<String> capDrop, Map<String, String> restartPolicy) {
-      return new AutoValue_HostConfig(containerIDFile, copyWithNullOf(binds), copyOf(lxcConf), privileged, copyWithNullOf(dns), copyWithNullOf(dnsSearch),
-            copyOf(portBindings), copyWithNullOf(links), copyWithNullOf(extraHosts), publishAllPorts, copyWithNullOf(volumesFrom), networkMode,
-            copyOf(securityOpt), copyWithNullOf(capAdd), copyWithNullOf(capDrop), copyOf(restartPolicy));
-   }
-
-   public static Builder builder() {
-      return new Builder();
+      return builder().containerIDFile(containerIDFile).binds(copyWithNullOf(binds)).lxcConf(copyOf(lxcConf))
+            .privileged(privileged).dns(copyWithNullOf(dns)).dnsSearch(copyWithNullOf(dnsSearch))
+            .portBindings(copyOf(portBindings)).links(copyWithNullOf(links)).extraHosts(copyWithNullOf(extraHosts))
+            .publishAllPorts(publishAllPorts).volumesFrom(copyWithNullOf(volumesFrom)).networkMode(networkMode)
+            .securityOpt(copyOf(securityOpt)).capAdd(copyWithNullOf(capAdd)).capDrop(copyWithNullOf(capDrop))
+            .restartPolicy(copyOf(restartPolicy)).build();
    }
 
    public Builder toBuilder() {
-      return builder().fromHostConfig(this);
+      return new AutoValue_HostConfig.Builder(this);
    }
 
-   public static final class Builder {
+   public static Builder builder() {
+      return new AutoValue_HostConfig.Builder();
+   }
 
-      private String containerIDFile;
-      private List<String> binds;
-      private List<Map<String, String>> lxcConf = Lists.newArrayList();
-      private boolean privileged;
-      private List<String> dns;
-      private List<String> dnsSearch;
-      private Map<String, List<Map<String, String>>> portBindings = Maps.newLinkedHashMap();
-      private List<String> links;
-      private List<String> extraHosts;
-      private boolean publishAllPorts;
-      private List<String> volumesFrom;
-      private String networkMode;
-      private List<String> securityOpt = Lists.newArrayList();
-      private List<String> capAdd;
-      private List<String> capDrop;
-      private Map<String, String> restartPolicy = Maps.newHashMap();
+   @AutoValue.Builder
+   public abstract static class Builder {
+      public abstract Builder containerIDFile(String value);
+      public abstract Builder binds(List<String> value);
+      public abstract Builder lxcConf(List<Map<String, String>> value);
+      public abstract Builder privileged(boolean value);
+      public abstract Builder dns(List<String> value);
+      public abstract Builder dnsSearch(List<String> value);
+      public abstract Builder portBindings(Map<String, List<Map<String, String>>> value);
+      public abstract Builder links(List<String> value);
+      public abstract Builder extraHosts(List<String> value);
+      public abstract Builder publishAllPorts(boolean value);
+      public abstract Builder volumesFrom(List<String> value);
+      public abstract Builder networkMode(String value);
+      public abstract Builder securityOpt(List<String> value);
+      public abstract Builder capAdd(List<String> value);
+      public abstract Builder capDrop(List<String> value);
+      public abstract Builder restartPolicy(Map<String, String> value);
       
-      public Builder containerIDFile(String containerIDFile) {
-         this.containerIDFile = containerIDFile;
-         return this;
-      }
-
-      public Builder binds(List<String> binds) {
-         this.binds = binds;
-         return this;
-      }
-
-      public Builder lxcConf(List<Map<String, String>> lxcConf) {
-         this.lxcConf = lxcConf;
-         return this;
-      }
-
-      public Builder privileged(boolean privileged) {
-         this.privileged = privileged;
-         return this;
-      }
-
-      public Builder dns(List<String> dns) {
-         this.dns = dns;
-         return this;
-      }
-
-      public Builder dnsSearch(List<String> dnsSearch) {
-         this.dnsSearch = dnsSearch;
-         return this;
-      }
-
-      public Builder links(List<String> links) {
-         this.links = links;
-         return this;
-      }
-
-      public Builder extraHosts(List<String> extraHosts) {
-         this.extraHosts = extraHosts;
-         return this;
-      }
-
-      public Builder portBindings(Map<String, List<Map<String, String>>> portBindings) {
-         this.portBindings = portBindings;
-         return this;
-      }
-
-      public Builder publishAllPorts(boolean publishAllPorts) {
-         this.publishAllPorts = publishAllPorts;
-         return this;
-      }
-
-      public Builder volumesFrom(List<String> volumesFrom) {
-         this.volumesFrom = volumesFrom;
-         return this;
-      }
-
-      public Builder networkMode(String networkMode) {
-         this.networkMode = networkMode;
-         return this;
-      }
-
-      public Builder securityOpt(List<String> securityOpt) {
-         this.securityOpt = securityOpt;
-         return this;
-      }
-
-      public Builder capAdd(List<String> capAdd) {
-         this.capAdd = capAdd;
-         return this;
-      }
-
-      public Builder capDrop(List<String> capDrop) {
-         this.capDrop = capDrop;
-         return this;
-      }
-
-      public Builder restartPolicy(Map<String, String> restartPolicy) {
-         this.restartPolicy = restartPolicy;
-         return this;
-      }
-      
-      public HostConfig build() {
-         return HostConfig.create(containerIDFile, binds, lxcConf, privileged, dns, dnsSearch, portBindings, links,
-               extraHosts, publishAllPorts, volumesFrom, networkMode, securityOpt, capAdd, capDrop, restartPolicy);
-      }
-
-      public Builder fromHostConfig(HostConfig in) {
-         return this.containerIDFile(in.containerIDFile()).binds(in.binds()).lxcConf(in.lxcConf())
-               .privileged(in.privileged()).dns(in.dns()).dnsSearch(in.dnsSearch()).links(in.links())
-               .extraHosts(in.extraHosts()).portBindings(in.portBindings()).publishAllPorts(in.publishAllPorts())
-               .volumesFrom(in.volumesFrom()).networkMode(in.networkMode()).securityOpt(in.securityOpt())
-               .capAdd(in.capAdd()).capDrop(in.capDrop()).restartPolicy(in.restartPolicy());
-      }
+      public abstract HostConfig build();
    }
 }

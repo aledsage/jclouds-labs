@@ -332,7 +332,7 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
     */
    public DockerTemplateOptions configBuilder(Config.Builder configBuilder) {
       this.configBuilder = configBuilder != null
-            ? Config.builder().fromConfig(configBuilder.image(NO_IMAGE).build())
+            ? configBuilder.image(NO_IMAGE).build().toBuilder()
             : null;
       return this;
    }

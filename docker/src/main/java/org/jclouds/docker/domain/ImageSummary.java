@@ -17,6 +17,7 @@
 package org.jclouds.docker.domain;
 
 import static org.jclouds.docker.internal.NullSafeCopies.copyOf;
+
 import java.util.List;
 
 import org.jclouds.json.SerializedNames;

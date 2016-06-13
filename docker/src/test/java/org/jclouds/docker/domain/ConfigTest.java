@@ -40,7 +40,7 @@ public class ConfigTest {
          .workingDir("/home/weave")
          .exposedPorts(ImmutableMap.of("6783/tcp", ImmutableMap.of(), "6783/udp", ImmutableMap.of()))
          .build();
-      Config newConfig = Config.builder().fromConfig(origConfig).build();
+      Config newConfig = origConfig.toBuilder().build();
       assertThat(origConfig).isEqualTo(newConfig);
    }
 

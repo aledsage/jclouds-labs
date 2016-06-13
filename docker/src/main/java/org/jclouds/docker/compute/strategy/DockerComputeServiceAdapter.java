@@ -178,7 +178,7 @@ public class DockerComputeServiceAdapter implements
                portBindings.put(exposedPort, Lists.<Map<String, String>>newArrayList(ImmutableMap.of("HostIp", "0.0.0.0")));
             }
          }
-         hostConfigBuilder = HostConfig.builder().fromHostConfig(containerConfig.hostConfig());
+         hostConfigBuilder = containerConfig.hostConfig().toBuilder();
          hostConfigBuilder.portBindings(portBindings);
          containerConfigBuilder.hostConfig(hostConfigBuilder.build());
 

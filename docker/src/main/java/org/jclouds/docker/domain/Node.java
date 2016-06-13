@@ -29,35 +29,24 @@ public abstract class Node {
 
    @SerializedNames({"IP"})
    public static Node create(String ip) {
-      return new AutoValue_Node(ip);
-   }
-
-   public static Builder builder() {
-      return new Builder();
+      return builder().ip(ip).build();
    }
 
    @Nullable
    public abstract String ip();
 
    public Builder toBuilder() {
-      return builder().fromNode(this);
+      return new AutoValue_Node.Builder(this);
    }
 
-   public static final class Builder {
+   public static Builder builder() {
+      return new AutoValue_Node.Builder();
+   }
 
-      private String ip;
-
-      public Builder ip(String ip) {
-         this.ip = ip;
-         return this;
-      }
-
-      public Node build() {
-         return Node.create(this.ip);
-      }
-
-      public Builder fromNode(Node in) {
-         return this.ip(in.ip());
-      }
+   @AutoValue.Builder
+   public abstract static class Builder {
+      public abstract Builder ip(String value);
+      
+      public abstract Node build();
    }
 }
